@@ -49,3 +49,63 @@ survey_responses = pd.read_excel("fcc_survey_headers.xlsx",
                                  skiprows=2, 
                                  usecols=col_string)
 ```
+
+### Combine worksheets in Excel workbook
+```python
+# Create empty dataframe to hold all loaded sheets
+combined_df = pd.DataFrame()
+
+# Iterate through dataframes in dictionary
+for sheet_name, frame in df.items():
+  # Add a column so we know which year data is from
+  frame["Year"] = sheet_name
+  
+  # Add each dataframe to df
+  combined_df = df.append(frame)
+```
+
+```python
+# Load both the 2016 and 2017 sheets by name
+all_survey_data = pd.read_excel("fcc_survey.xlsx",
+                                sheet_name=(["2016", "2017"]))
+
+# Load both sheets by position and name
+all_survey_data = pd.read_excel("fcc_survey.xlsx",
+                                sheet_name=[0, "2017"])
+
+# Load all sheets in the Excel file
+all_survey_data = pd.read_excel("fcc_survey.xlsx",
+                                sheet_name=None)
+```
+
+### Append multiple worksheets to single Dataframe
+```python
+# Create an empty dataframe
+all_responses = pd.DataFrame()
+
+# Set up for loop to iterate through values in responses
+# DataFrame.values() - Only values in the DataFrame will be returned, the axes labels will be removed.
+# https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.values.html
+for df in responses.values():
+  # Print the number of rows being added
+  print("Adding {} rows".format(df.shape[0]))
+  # Append df to all_responses, assign result
+  all_responses = all_responses.append(df)
+
+# Graph employment statuses in sample
+counts = all_responses.groupby("EmploymentStatus").EmploymentStatus.count()
+counts.plot.barh()
+plt.show()
+```
+
+### Set custom TRUE/FALSE values
+
+```python
+# Load file with Yes as a True value and No as a False value
+survey_subset = pd.read_excel("fcc_survey_yn_data.xlsx",
+                              dtype={"HasDebt": bool,
+                              "AttendedBootCampYesNo": bool},
+                              true_values=["Yes"],                      
+                              false_values=["No"])
+```
+
