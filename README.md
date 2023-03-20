@@ -1,6 +1,6 @@
 # Learn Python 101
 
-### Set custom NA values
+## Set custom NA values
 ```python
 # Create dict specifying that 0s in zipcode are NA values
 null_values = {'zipcode':0}
@@ -13,7 +13,7 @@ data = pd.read_csv("vt_tax_data_2016.csv",
 print(data[data.zipcode.isna()])
 ```
 
-### Skip bad data
+## Skip bad data
 ```python
 try:
   # Set warn_bad_lines to issue warnings about bad records
@@ -39,7 +39,7 @@ counts.plot.bar()
 plt.show()
 ```
 
-### Load a portion of excel only
+## Load a portion of excel only
 ```python
 # Create string of lettered columns to load
 col_string = "AD, AW:BA"
@@ -50,7 +50,7 @@ survey_responses = pd.read_excel("fcc_survey_headers.xlsx",
                                  usecols=col_string)
 ```
 
-### Combine worksheets in Excel workbook
+## Combine worksheets in Excel workbook
 ```python
 # Create empty dataframe to hold all loaded sheets
 combined_df = pd.DataFrame()
@@ -78,7 +78,7 @@ all_survey_data = pd.read_excel("fcc_survey.xlsx",
                                 sheet_name=None)
 ```
 
-### Append multiple worksheets to single Dataframe
+## Append multiple worksheets to single Dataframe
 ```python
 # Create an empty dataframe
 all_responses = pd.DataFrame()
@@ -98,7 +98,7 @@ counts.plot.barh()
 plt.show()
 ```
 
-### Set custom TRUE/FALSE values
+## Set custom TRUE/FALSE values
 
 ```python
 # Load file with Yes as a True value and No as a False value
@@ -109,7 +109,7 @@ survey_subset = pd.read_excel("fcc_survey_yn_data.xlsx",
                               false_values=["No"])
 ```
 
-### Parse dates
+## Parse dates
 
 **Using `parse_dates`**
 
@@ -141,4 +141,40 @@ Use `pd.to_datetime()` for non-standard datetime formats. Refer to [https://strf
 # Parse datetimes and assign result back to Part2EndTime
 survey_data["Part2EndTime"] = pd.to_datetime(survey_data["Part2EndTime"], 
                                              format="%m%d%Y %H:%M:%S")
+```
+
+***
+
+## Create databases
+
+```python
+# Load pandas and sqlalchemy's create_engine
+import pandas as pd
+from sqlalchemy import create_engine
+
+# Create database engine to manage connections
+engine = create_engine("sqlite:///data.db")
+
+# View the tables in the database
+print(engine.table_names())
+
+# Load data by table name
+# read_sql() accepts a string of either a SQL query to run, or a table to load.
+data = pd.read_sql("data", engine)
+
+# Load data by SQL query
+query = """SELECT * FROM data;"""
+data = pd.read_sql(query, engine)
+```
+
+**Load JSON files**
+```python
+# Load the JSON with orient specified
+df = pd.read_json("dhs_report_reformatted.json", orient="split")
+
+# Plot total population in shelters over time
+df["date_of_census"] = pd.to_datetime(df["date_of_census"])
+df.plot(x="date_of_census", 
+        y="total_individuals_in_shelter")
+plt.show()
 ```
