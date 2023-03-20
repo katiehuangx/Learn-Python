@@ -109,3 +109,36 @@ survey_subset = pd.read_excel("fcc_survey_yn_data.xlsx",
                               false_values=["No"])
 ```
 
+### Parse dates
+
+**Using `parse_dates`**
+
+`parse_dates` arg only works with standard datetime formats. 
+
+```python
+# List column of dates to parse
+# Columns in list format
+data_cols = ["start_time", "end_time", 
+            [["start_time", "end_time"]]] # Combines 2 columns to be 1 column
+
+# Columns in dictionary format
+data_cols = {"start_date": "start_time",
+            "end_date": "end_time",
+            "start_datetime: ["start_time", "end_time"]
+            }
+            
+# Load file, parsing standard datetime columns
+df = pd.read_csv("data.csv", parse_dates=data_cols)
+```
+
+**Using `pd.to_datetime()`**
+
+Use `pd.to_datetime()` for non-standard datetime formats. Refer to [https://strftime.org](https://strftime.org) for format.
+
+<img width="818" alt="image" src="https://user-images.githubusercontent.com/81607668/226281955-76d2ac16-95d4-42f3-919b-df7982f7ec24.png">
+
+```python
+# Parse datetimes and assign result back to Part2EndTime
+survey_data["Part2EndTime"] = pd.to_datetime(survey_data["Part2EndTime"], 
+                                             format="%m%d%Y %H:%M:%S")
+```
