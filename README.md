@@ -211,7 +211,7 @@ response = requests.get(api_url,
                         headers = headers)
                         
 # Parsing responses/results
-# Isolate the JSON data from response object
+# Extract JSON data from the response
 data = response.json()
 print(data)
 
@@ -220,4 +220,29 @@ print(data)
 # Load "business" data to DataFrame
 bookstores = pd.DataFrame(data["business"])
 print(bookstores.head())
+```
+
+**Flatten JSON files**
+
+JSON data can be nested: an attribute's value can consist of attribute-value pairs. This nested data is more useful unpacked, or flattened, into its own dataframe columns. The `pandas.io.json` submodule has a function, `json_normalize()`, that does exactly this.
+
+```python
+# Load json_normalize()
+from pandas.io.json import json_normalize
+
+# Isolate the JSON data from the API response
+data = response.json()
+
+# Flatten business data into a dataframe, replace separator
+cafes = json_normalize(data["businesses"],
+                       sep="_")
+             
+# Load other business attributes and set meta prefix
+cafes = json_normalize(data["businesses"],
+                        sep="_",
+                    		record_path="categories", # The "categories" attribute in API response contains lists of objects. Specify path to "categories".
+                    		meta=["name", "alias",  "rating", # Select columns
+                          		  ["coordinates", "latitude"], 
+                          		  ["coordinates", "longitude"]],
+                    		meta_prefix="biz_") # Add prefix to prevent column name collisions
 ```
