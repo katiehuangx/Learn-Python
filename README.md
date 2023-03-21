@@ -51,6 +51,9 @@ survey_responses = pd.read_excel("fcc_survey_headers.xlsx",
 ```
 
 ## Combine worksheets in Excel workbook
+
+Append means to combine rows in multiple dataframes whereas merge is to merge columns.
+
 ```python
 # Create empty dataframe to hold all loaded sheets
 combined_df = pd.DataFrame()
