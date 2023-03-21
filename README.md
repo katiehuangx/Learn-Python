@@ -240,9 +240,9 @@ cafes = json_normalize(data["businesses"],
 # Load other business attributes and set meta prefix
 cafes = json_normalize(data["businesses"],
                         sep="_",
-                    		record_path="categories", # The "categories" attribute in API response contains lists of objects. Specify path to "categories".
-                    		meta=["name", "alias",  "rating", # Select columns
-                          		  ["coordinates", "latitude"], 
-                          		  ["coordinates", "longitude"]],
-                    		meta_prefix="biz_") # Add prefix to prevent column name collisions
+                    	  record_path="categories", # "categories" attribute in API response contains lists of objects. Specify path to "categories".
+                    	  meta=["name", "alias",  "rating", # Select columns
+                          	  ["coordinates", "latitude"], 
+                          		["coordinates", "longitude"]],
+                    	  meta_prefix="biz_") # Add prefix to prevent column name collisions
 ```
