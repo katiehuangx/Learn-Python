@@ -178,3 +178,46 @@ df.plot(x="date_of_census",
         y="total_individuals_in_shelter")
 plt.show()
 ```
+
+## Extracting data using API
+
+Requests lets users send and get data from any URL.
+
+`requests.get()` takes a string of the URL to get data from, and has optional keyword arguments that are useful for working with APIs. 
+- `params` keyword lets you pass a dictionary of parameter names and values to customize API requests. 
+- `headers` keyword takes a dictionary of names and values. If the API you're using requires a user authentication key, it would be passed in the header.
+- The result is a response object containing data and metadata. We need to use the response's JSON method to get just the data. However, the JSON method returns a dictionary, which `read_json` can't parse -- it expects a string. To load the data to a dataframe, we need to use `pd.DataFrame` instead.
+
+`api.key()` are strings used to identify the program calling the API and confirm it can make the call. 
+
+**Making requests**
+
+```python
+import requests
+import pandas as pd
+
+api_url = "url_link"
+
+# Set up parameter dictionary according to documentation
+params = {"term": "bookstore",
+          "location": "San Francisco"}
+
+# Set up header dictionary with API key according to documentation
+headers = {"Authorization": "Bearer {}.".format(api_key)}
+
+# Call API
+response = requests.get(api_url, 
+                        params = params, 
+                        headers = headers)
+                        
+# Parsing responses/results
+# Isolate the JSON data from response object
+data = response.json()
+print(data)
+
+# Identify the data which contains the data we want. In this case, it's in "business".
+
+# Load "business" data to DataFrame
+bookstores = pd.DataFrame(data["business"])
+print(bookstores.head())
+```
