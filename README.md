@@ -1,6 +1,19 @@
 # Learn Python 101
 
-## Set custom NA values
+## Cleaning data
+
+### Set custom TRUE/FALSE values
+
+```python
+# Load file with Yes as a True value and No as a False value
+survey_subset = pd.read_excel("fcc_survey_yn_data.xlsx",
+                              dtype={"HasDebt": bool,
+                              "AttendedBootCampYesNo": bool},
+                              true_values=["Yes"],                      
+                              false_values=["No"])
+```
+
+### Set custom NA values
 ```python
 # Create dict specifying that 0s in zipcode are NA values
 null_values = {'zipcode':0}
@@ -13,106 +26,7 @@ data = pd.read_csv("vt_tax_data_2016.csv",
 print(data[data.zipcode.isna()])
 ```
 
-## Skip bad data
-```python
-try:
-  # Set warn_bad_lines to issue warnings about bad records
-  data = pd.read_csv("vt_tax_data_2016_corrupt.csv", 
-                     error_bad_lines=False, 
-                     warn_bad_lines=True)
-  
-  # View first 5 records
-  print(data.head())
-  
-except pd.errors.ParserError:
-    print("Your data contained rows that could not be parsed.")
-```
-
-Load TSV file
-```python
-# Load TSV using the sep keyword argument to set delimiter
-data = pd.read_csv("vt_tax_data_2016.tsv", sep='\t')
-
-# Plot the total number of tax returns by income group "N1"
-counts = data.groupby("agi_stub").N1.sum()
-counts.plot.bar()
-plt.show()
-```
-
-## Load a portion of excel only
-```python
-# Create string of lettered columns to load
-col_string = "AD, AW:BA"
-
-# Load data with skiprows and usecols set
-survey_responses = pd.read_excel("fcc_survey_headers.xlsx", 
-                                 skiprows=2, 
-                                 usecols=col_string)
-```
-
-## Combine worksheets in Excel workbook
-
-Append means to combine rows in multiple dataframes whereas merge is to merge columns.
-
-```python
-# Create empty dataframe to hold all loaded sheets
-combined_df = pd.DataFrame()
-
-# Iterate through dataframes in dictionary
-for sheet_name, frame in df.items():
-  # Add a column so we know which year data is from
-  frame["Year"] = sheet_name
-  
-  # Add each dataframe to df
-  combined_df = df.append(frame)
-```
-
-```python
-# Load both the 2016 and 2017 sheets by name
-all_survey_data = pd.read_excel("fcc_survey.xlsx",
-                                sheet_name=(["2016", "2017"]))
-
-# Load both sheets by position and name
-all_survey_data = pd.read_excel("fcc_survey.xlsx",
-                                sheet_name=[0, "2017"])
-
-# Load all sheets in the Excel file
-all_survey_data = pd.read_excel("fcc_survey.xlsx",
-                                sheet_name=None)
-```
-
-## Append multiple worksheets to single Dataframe
-```python
-# Create an empty dataframe
-all_responses = pd.DataFrame()
-
-# Set up for loop to iterate through values in responses
-# DataFrame.values() - Only values in the DataFrame will be returned, the axes labels will be removed.
-# https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.values.html
-for df in responses.values():
-  # Print the number of rows being added
-  print("Adding {} rows".format(df.shape[0]))
-  # Append df to all_responses, assign result
-  all_responses = all_responses.append(df)
-
-# Graph employment statuses in sample
-counts = all_responses.groupby("EmploymentStatus").EmploymentStatus.count()
-counts.plot.barh()
-plt.show()
-```
-
-## Set custom TRUE/FALSE values
-
-```python
-# Load file with Yes as a True value and No as a False value
-survey_subset = pd.read_excel("fcc_survey_yn_data.xlsx",
-                              dtype={"HasDebt": bool,
-                              "AttendedBootCampYesNo": bool},
-                              true_values=["Yes"],                      
-                              false_values=["No"])
-```
-
-## Parse dates
+### Parse dates
 
 **Using `parse_dates`**
 
@@ -144,6 +58,134 @@ Use `pd.to_datetime()` for non-standard datetime formats. Refer to [https://strf
 # Parse datetimes and assign result back to Part2EndTime
 survey_data["Part2EndTime"] = pd.to_datetime(survey_data["Part2EndTime"], 
                                              format="%m%d%Y %H:%M:%S")
+```
+
+### Skip bad data
+```python
+try:
+  # Set warn_bad_lines to issue warnings about bad records
+  data = pd.read_csv("vt_tax_data_2016_corrupt.csv", 
+                     error_bad_lines=False, 
+                     warn_bad_lines=True)
+  
+  # View first 5 records
+  print(data.head())
+  
+except pd.errors.ParserError:
+    print("Your data contained rows that could not be parsed.")
+```
+
+***
+
+## Loading files
+
+### Load TSV file
+
+```python
+# Load TSV using the sep keyword argument to set delimiter
+data = pd.read_csv("vt_tax_data_2016.tsv", sep='\t')
+
+# Plot the total number of tax returns by income group "N1"
+counts = data.groupby("agi_stub").N1.sum()
+counts.plot.bar()
+plt.show()
+```
+
+### Load a portion of excel only
+
+```python
+# Create string of lettered columns to load
+col_string = "AD, AW:BA"
+
+# Load data with skiprows and usecols set
+survey_responses = pd.read_excel("fcc_survey_headers.xlsx", 
+                                 skiprows=2, 
+                                 usecols=col_string)
+```
+
+## Combine datasets
+
+Append means to combine rows in multiple dataframes whereas, merge is to merge columns from another dataframe.
+
+### Combine multiple sheets in Excel workbook
+
+```python
+# Create empty dataframe to hold all loaded sheets
+combined_df = pd.DataFrame()
+
+# Iterate through dataframes in dictionary
+for sheet_name, frame in df.items():
+  # Add a column so we know which year data is from
+  frame["Year"] = sheet_name
+  
+  # Add each dataframe to df
+  combined_df = df.append(frame)
+```
+
+```python
+# Load both the 2016 and 2017 sheets by name
+all_survey_data = pd.read_excel("fcc_survey.xlsx",
+                                sheet_name=(["2016", "2017"]))
+
+# Load both sheets by position and name
+all_survey_data = pd.read_excel("fcc_survey.xlsx",
+                                sheet_name=[0, "2017"])
+
+# Load all sheets in the Excel file
+all_survey_data = pd.read_excel("fcc_survey.xlsx",
+                                sheet_name=None)
+```
+
+### Append multiple worksheets to Dataframe
+
+```python
+# Create an empty dataframe
+all_responses = pd.DataFrame()
+
+# Set up for loop to iterate through values in responses
+# DataFrame.values() - Only values in the DataFrame will be returned, the axes labels will be removed.
+# https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.values.html
+for df in responses.values():
+  # Print the number of rows being added
+  print("Adding {} rows".format(df.shape[0]))
+  # Append df to all_responses, assign result
+  all_responses = all_responses.append(df)
+
+# Graph employment statuses in sample
+counts = all_responses.groupby("EmploymentStatus").EmploymentStatus.count()
+counts.plot.barh()
+plt.show()
+```
+
+### Append vs. Merge dataframes
+
+**Append dataframes**
+
+```python
+# Add an offset parameter to get cafes 51-100
+params = {"term": "cafe", 
+          "location": "NYC",
+          "sort_by": "rating", 
+          "limit": 50,
+          "offset": 50}
+
+result = requests.get(api_url, headers=headers, params=params)
+next_50_cafes = json_normalize(result.json()["businesses"])
+
+# Append the results, setting ignore_index to renumber rows
+cafes = top_50_cafes.append(next_50_cafes, ignore_index=True)
+```
+
+**Merge dataframes**
+
+```python
+# Merge crosswalk into cafes on their zip code fields
+cafes_with_pumas = cafes.merge(crosswalk, 
+                    left_on="location_zip_code", 
+                    right_on="zipcode")
+
+# Merge pop_data into cafes_with_pumas on puma field
+cafes_with_pop = cafes_with_pumas.merge(pop_data, on="puma")
 ```
 
 ***
@@ -213,19 +255,16 @@ response = requests.get(api_url,
                         params = params, 
                         headers = headers)
                         
-# Parsing responses/results
 # Extract JSON data from the response
 data = response.json()
-print(data)
 
 # Identify the data which contains the data we want. In this case, it's in "business".
-
 # Load "business" data to DataFrame
 bookstores = pd.DataFrame(data["business"])
 print(bookstores.head())
 ```
 
-**Flatten JSON files**
+### Flatten JSON files
 
 JSON data can be nested: an attribute's value can consist of attribute-value pairs. This nested data is more useful unpacked, or flattened, into its own dataframe columns. The `pandas.io.json` submodule has a function, `json_normalize()`, that does exactly this.
 
